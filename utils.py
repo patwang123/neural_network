@@ -3,11 +3,9 @@ import math
 import random
 
 def sigmoid(z):
-    sig = lambda z: 1/(1+math.exp(z))
-    try:
-        return np.vectorize(sig)(z)
-    except:
-        return sig(z)
+    z = np.clip(z, -500, 500) #to prevent overflow, if it's past these numbers then it's pretty much 0/1.
+    return 1.0 / (1.0 + np.exp(-z))
+
 def sigmoid_gradient(a):
     return np.vectorize(lambda i: i*(1-i))(a)
 
@@ -37,3 +35,8 @@ def forward_propagate(thetas, x_row):
         a.append(add_one(new_a))
     a[-1] = a[-1][1:]
     return np.array(a, dtype='object')
+
+def format_training(arr):
+    if len(arr.shape) == 1:
+        return arr
+    return np.array([f.ravel() for f in arr])
