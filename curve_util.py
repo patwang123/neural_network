@@ -2,6 +2,7 @@ import utils
 import idx2numpy
 from neuralN import NeuralNetwork
 import time
+import pickle
 
 files = {'train_images': 'data/train-images.idx3-ubyte',
          'train_labels': 'data/train-labels.idx1-ubyte',
@@ -33,11 +34,19 @@ def initialize_nn():
     return neural
 """
 constructs learning curves based on the # of training items to be used
+
+NEED TO IMPLEMENT PICKLE -- ONLY RUN IT IF THE PERCENTAGE IS NOT IN THE PICKLE
 """
 def construct_learning_curves(percentages):
-    errors = {}
-
+    try:
+        with open('training_size.pickle', 'rb') as p:
+            errors = pickle.load(p)
+    except:
+        errors = {}
+    existing = errors.keys()
     for p in percentages:
+        if p in existing:
+            continue
         train_images = f('train_images')[:int(p*size)]
         train_labels = f('train_labels')[:int(p*size)]
         nn = initialize_nn()
@@ -62,7 +71,11 @@ def construct_learning_curves(percentages):
     return errors
 
 def construct_lambda_curves(lambdas):
-    errors = {}
+    try:
+        with open('lambdas.pickle', 'rb') as p:
+            errors = pickle.load(p)
+    except:
+        errors = {}
     train_images = f('train_images')[:int(m_*size)]
     train_labels = f('train_labels')[:int(m_*size)]
     for lambda_ in lambdas:
